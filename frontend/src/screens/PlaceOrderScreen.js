@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import {
   ListGroup,
@@ -12,24 +12,49 @@ import {
 import Message from "../components/Message";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-
 import Progress from "../components/Progress";
-import CartItem from "../components/CartItem";
+import { createOrder } from "../actions/orderAction";
 
-const PlaceOrderScreen = () => {
+const PlaceOrderScreen = ({ history }) => {
+  const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart);
   const { address, country, pinCode, city } = cart.shippingAddress;
 
+  const orderCreate = useSelector((state) => state.orderCreate);
+  const { order, success, error } = orderCreate;
   const addDecimal = (num) => {
     return (Math.round(num * 100) / 100).toFixed(2);
   };
+
+  useEffect(() => {
+    if (success) {
+      history.push(`/order/${order._id}`);
+    }
+  }, [history, success]);
   cart.itemsPrice = addDecimal(
     cart.cartItems.reduce((acc, item) => acc + item.price * item.qty, 0)
   );
-  cart.shippingPrice = addDecimal(cart.itemsPrice > 100 ? 0 : 40);
-  cart.taxPrice = addDecimal(Number(0.15 * cart.itemsPrice.toFixed(2)));
+  cart.shippingPrice = addDecimal(Number(cart.itemsPrice > 100 ? 0 : 40));
+  cart.taxPrice = addDecimal(Number(0.15 * addDecimal(cart.itemsPrice)));
+  cart.totalPrice =
+    Number(cart.shippingPrice) +
+    Number(cart.taxPrice) +
+    Number(cart.itemsPrice);
   const placeOrderHandler = (e) => {
-    console.log("order");
+    dispatch(
+      createOrder({
+        totalPrice: cart.totalPrice,
+        shippingAddress: {
+          ...cart.shippingAddress,
+          postalCode: cart.shippingAddress.pinCode,
+        },
+        taxPrice: cart.taxPrice,
+        shippingPrice: cart.shippingPrice,
+        orderItems: cart.cartItems,
+        paymentMethod: cart.paymentMethod ? cart.paymentMethod : "PayPal",
+        itemsPrice: cart.itemsPrice,
+      })
+    );
   };
   return (
     <>
@@ -70,7 +95,8 @@ const PlaceOrderScreen = () => {
                           <Link to={`/products/${item._id}`}>{item.name}</Link>
                         </Col>
                         <Col md={4}>
-                          {item.qty} X ${item.price} = ${item.qty * item.price}
+                          {item.qty} X ${item.price} = $
+                          {(item.qty * item.price).toFixed(2)}
                         </Col>
                       </Row>
                     </ListGroup.Item>
@@ -110,6 +136,12 @@ const PlaceOrderScreen = () => {
                   <Col>${cart.totalPrice}</Col>
                 </Row>
               </ListGroup.Item>
+              {error && (
+                <ListGroup.Item>
+                  <Message variant="danger">{error}</Message>
+                </ListGroup.Item>
+              )}
+
               <ListGroup.Item>
                 <Button
                   type="button"

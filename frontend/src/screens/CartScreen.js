@@ -12,6 +12,7 @@ const CartScreen = ({ history }) => {
     (state) => state.cart
   );
   const { userInfo } = useSelector((state) => state.user);
+  console.log(cartItems);
   const submitHadler = (e) => {
     if (!userInfo.name) {
       <Redirect to="/login" />;
@@ -44,7 +45,7 @@ const CartScreen = ({ history }) => {
                 <ListGroup.Item as="div">
                   <div>
                     <h5>
-                      Subtotal({count ? count : 0} items): <br />
+                      Subtotal ({count ? count : 0} items) <br />
                       <strong>
                         ₹{totalPrice ? totalPrice.toFixed(2) : 0}/-
                       </strong>

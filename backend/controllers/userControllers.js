@@ -53,4 +53,25 @@ const updateUser = asyncErrorsHandler(async (req, res, next) => {
   }
 });
 
-export { authUser, getUserProfile, registerUser, updateUser };
+//@desc Get All Users
+// protected
+
+const getUsers = asyncErrorsHandler(async (req, res, next) => {
+  const users = await User.find({});
+  res.json(users);
+});
+
+const deleteUser = asyncErrorsHandler(async (req, res, next) => {
+  console.log(req.params.id);
+  const users = await User.findByIdAndDelete(req.params.id);
+  res.json({ message: "Successfully removed user" });
+});
+
+export {
+  authUser,
+  getUserProfile,
+  registerUser,
+  updateUser,
+  getUsers,
+  deleteUser,
+};

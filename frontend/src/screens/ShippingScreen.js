@@ -65,7 +65,7 @@ const ShippingScreen = ({ history }) => {
           <Form.Control
             value={country}
             onChange={(e) => setCountry(e.target.value)}
-            type="password"
+            type="text"
             placeholder="country"
           />
         </Form.Group>

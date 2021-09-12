@@ -2,22 +2,23 @@ import jwt from "jsonwebtoken";
 import User from "../db/model/User.js";
 import asyncErrorsHandler from "../errors/asyncErrorsHandler.js";
 import CustomError from "../errors/CustomError.js";
+import colour from "colours";
 
 const protect = asyncErrorsHandler(async (req, res, next) => {
   let token;
 
   if (
-    req.headers.autherization &&
-    req.headers.autherization.startsWith("Bearer")
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
   ) {
-    token = req.headers.autherization.split(" ")[1];
+    token = req.headers.authorization.split(" ")[1];
 
     try {
       const decoded = jwt.verify(token, process.env.SECRET);
       const user = await User.findById(decoded.id).select("-password");
 
       req.user = user;
-      console.log("protect worked");
+      console.log("protect worked".green);
       next();
     } catch (error) {
       throw error;
@@ -27,4 +28,12 @@ const protect = asyncErrorsHandler(async (req, res, next) => {
     throw new CustomError(400, "Provide Token");
   }
 });
-export { protect };
+
+const admin = (req, res, next) => {
+  if (req.user && req.user.isAdmin) {
+    next();
+  } else {
+    throw new CustomError(401, "Not Authorized");
+  }
+};
+export { protect, admin };

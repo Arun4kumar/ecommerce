@@ -5,6 +5,7 @@ import connectDB from "./db/connectDB.js";
 import "colours";
 import errorHandler from "./errors/errorHandler.js";
 import userRoutes from "./routes/userRoutes.js";
+import orderRoutes from "./routes/orders.js";
 import CustomError from "./errors/CustomError.js";
 
 dotenv.config();
@@ -18,9 +19,11 @@ app.get("/", (req, res) => {
 });
 app.use("/api/products", products);
 app.use("/api/users", userRoutes);
+app.use("/api/orders", orderRoutes);
+app.get("/api/config/paypal", (req, res) => res.send(process.env.PAYPAL));
 
 app.use("*", (req, res, next) => {
-  console.log(`path${req}`.blue);
+  console.log(req.path, req.method);
   throw new CustomError(404, "Not found");
 });
 

@@ -3,8 +3,6 @@ export const cartReducer = (
     cartItems: [],
     shippingAddress: {},
     paymentMethod: "",
-    totalPrice: 0,
-    count: 0,
     loading: false,
     error: null,
   },
@@ -18,25 +16,24 @@ export const cartReducer = (
       const isExists = state.cartItems.find(
         (item) => item.name === recieved.name
       );
-      console.log(state);
+      const { qty, price } = recieved;
+
+      let temp = false;
+
       if (isExists) {
+        temp = true;
         state.cartItems.map((item) =>
-          isExists.name === item.name ? (item.qty = Number(recieved.qty)) : item
+          isExists.name === item.name ? (item.qty = qty) : item
         );
       } else {
         state.cartItems = [...state.cartItems, recieved];
       }
-      console.log(state.totalPrice);
+
       return {
         ...state,
         loading: false,
-
-        totalPrice: isExists
-          ? state.totalPrice + recieved.price * (recieved.qty - isExists.qty)
-          : state.totalPrice + recieved.price * recieved.qty,
-        count: isExists
-          ? state.coutn + recieved.qty - isExists.qty
-          : recieved.qty,
+        count: state.count + qty,
+        totalPrice: state.totalPrice + qty * price,
       };
     case "CART_ADD_FAIL":
       return {
@@ -51,11 +48,11 @@ export const cartReducer = (
       const itemToRemove = state.cartItems.find(
         (item) => (item._id = action.payload)
       );
-      console.log(itemToRemove);
+
       const modified = state.cartItems.filter(
         (item) => item._id !== action.payload
       );
-
+      console.log(modified);
       return {
         ...state,
         cartItems: modified,
@@ -78,6 +75,14 @@ export const cartReducer = (
       return {
         ...state,
         paymentMethod: action.payload,
+      };
+    case "RESET_CART":
+      return {
+        cartItems: [],
+        shippingAddress: {},
+        paymentMethod: "",
+        loading: false,
+        error: null,
       };
     default:
       return state;

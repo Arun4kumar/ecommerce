@@ -1,20 +1,18 @@
-import React, { useState } from "react";
+import React from "react";
 import { useHistory } from "react-router";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { cartAddAction, cartRemoveAction } from "../actions/cartActions.js";
 import { Row, Form, Button, Container, Col, Image } from "react-bootstrap";
-import { useRef } from "react";
 
 const CartItem = (props) => {
-  const temp = useRef();
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const { name, image, qty, price, countInStock, _id } = props.product;
+  let { name, image, qty, price, countInStock, _id } = props.product;
 
-  const addToCart = () => {
-    dispatch(cartAddAction({ id: _id, qty: temp.current.value }));
+  const addToCart = (e) => {
+    dispatch(cartAddAction({ id: _id, qty: e.target.value }));
     history.push("/cart");
   };
   const removeFromCartHandler = () => {
@@ -29,20 +27,14 @@ const CartItem = (props) => {
         </Col>
         <Col md={3}>
           <Link to={`/products/${_id}`}>
-            <h4>{name}</h4>
+            <h5>{name}</h5>
           </Link>
         </Col>
         <Col md={2}>
-          <h4>{price}</h4>
+          <h5>{price}</h5>
         </Col>
-        <Col md={2}>
-          <Form.Control
-            as="select"
-            variant="light"
-            ref={temp}
-            defaultValue={qty}
-            onChange={(e) => addToCart()}
-          >
+        <Col md={3}>
+          <Form.Control as="select" value={qty} onChange={(e) => addToCart(e)}>
             {[...Array(countInStock).keys()].map((key) => (
               <option key={key + 1} value={key + 1}>
                 {key + 1}

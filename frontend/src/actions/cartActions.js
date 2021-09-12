@@ -16,7 +16,6 @@ export const cartAddAction =
         ...product,
         qty: Number(qty),
       };
-      console.log(temp);
       dispatch({ type: "CART_ADD_SUCCESS", payload: temp });
       localStorage.setItem(
         "cartItems",
@@ -24,6 +23,7 @@ export const cartAddAction =
       );
     } catch (error) {
       dispatch({ type: "CART_ADD_FAIL", error: error.message });
+      console.log(error);
     }
   };
 export const cartRemoveAction =
