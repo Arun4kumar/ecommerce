@@ -24,21 +24,21 @@ const authUser = asyncErrorsHandler(async (req, res) => {
   }
 });
 
-const getUserProfile = asyncErrorsHandler(async (req, res, next) => {
-  console.log("get route sucess".yellow);
+const getUserProfile = asyncErrorsHandler(async (req, res) => {
   res.json(req.user);
 });
 
-const registerUser = asyncErrorsHandler(async (req, res, next) => {
+const registerUser = asyncErrorsHandler(async (req, res) => {
   const details = req.body;
 
   const user = await User.create(details);
   res.status(201).json(user);
 });
 
-const updateUser = asyncErrorsHandler(async (req, res, next) => {
+const updateUser = asyncErrorsHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
-  console.log("inside update".red, req.body);
+  console.log(user);
+  console.log(req);
   if (user) {
     user.email = req.body.email;
     user.name = req.body.name;
@@ -47,7 +47,7 @@ const updateUser = asyncErrorsHandler(async (req, res, next) => {
     }
 
     const temp = await user.save();
-    console.log("updated user", user);
+    res.json({ message: "PROFILE UPDATED!" });
   } else {
     throw new CustomError(404, "User Not Found");
   }
@@ -56,15 +56,40 @@ const updateUser = asyncErrorsHandler(async (req, res, next) => {
 //@desc Get All Users
 // protected
 
-const getUsers = asyncErrorsHandler(async (req, res, next) => {
+const getUsers = asyncErrorsHandler(async (req, res) => {
   const users = await User.find({});
   res.json(users);
 });
 
-const deleteUser = asyncErrorsHandler(async (req, res, next) => {
+const deleteUser = asyncErrorsHandler(async (req, res) => {
   console.log(req.params.id);
   const users = await User.findByIdAndDelete(req.params.id);
   res.json({ message: "Successfully removed user" });
+});
+const getUser = asyncErrorsHandler(async (req, res) => {
+  const user = await User.findById(req.params.id).select("-password");
+  if (!user) {
+    throw new CustomError(404, "User doesn't Exists");
+  }
+  res.json(user);
+});
+
+const updateUserAdmin = asyncErrorsHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    throw new CustomError(404, "User doesn't Exists");
+  }
+  console.log(req.body);
+  user.email = req.body.email;
+  user.name = req.body.name;
+  if (req.body.password) {
+    user.password = req.body.password;
+  } else {
+    user.password = user.password;
+  }
+
+  const temp = await user.save();
+  res.json({ message: "Successfully Updated User" });
 });
 
 export {
@@ -74,4 +99,6 @@ export {
   updateUser,
   getUsers,
   deleteUser,
+  getUser,
+  updateUserAdmin,
 };

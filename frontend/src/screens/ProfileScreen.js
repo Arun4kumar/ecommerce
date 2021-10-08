@@ -5,28 +5,47 @@ import { updateUser } from "../actions/userActions";
 import Message from "../components/Message";
 import { useSelector, useDispatch } from "react-redux";
 import { listMyOrders } from "../actions/orderAction";
+import { useHistory } from "react-router-dom";
 import { Row, Col, Form, Table, Button } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 
 const ProfileScreen = () => {
+  const history = useHistory();
   const dispatch = useDispatch();
   const { profileInfo, error, loading } = useSelector((state) => state.profile);
+  const { userInfo } = useSelector((state) => state.user);
+  const {
+    profileInfo: testing,
+    success,
+    error: updateError,
+    loading: updating,
+  } = useSelector((state) => state.profileUpdate);
   const orderMyList = useSelector((state) => state.orderMyList);
   const {
     loading: loadingOrders,
     error: errorOrder,
     order: orders,
   } = orderMyList;
-  const [email, setEmail] = useState(profileInfo.email);
-  const [name, setName] = useState(profileInfo.name);
+  const [email, setEmail] = useState();
+  const [name, setName] = useState();
   const [info, setInfo] = useState(null);
   const [password, setPassword] = useState();
   const [conformPassword, setConformPassword] = useState();
 
   useEffect(() => {
-    dispatch(getProfile("profile"));
+    if (!userInfo) {
+      history.push("/login");
+    }
+    if (!profileInfo || !profileInfo.name) {
+      dispatch(getProfile());
+    } else {
+      setEmail(profileInfo.email);
+      setName(profileInfo.name);
+    }
+
     dispatch(listMyOrders());
-  }, [info, dispatch]);
+  }, [dispatch, testing, profileInfo, success, updating]);
+
   const formSubmitHandler = (e) => {
     e.preventDefault();
 
@@ -34,7 +53,6 @@ const ProfileScreen = () => {
       setInfo("Password do not match");
       return;
     }
-    setInfo(null);
 
     dispatch(
       updateUser({
@@ -43,7 +61,8 @@ const ProfileScreen = () => {
         password: password ? password : profileInfo.password,
       })
     );
-    setInfo("Profile Updated");
+    dispatch({ type: "PROFILE_RESET" });
+    setInfo(null);
   };
 
   return (
@@ -51,9 +70,10 @@ const ProfileScreen = () => {
       {loading && <Loader />}
       <Col md={3}>
         <h3>Profile Update</h3>
-        {info && <Message variant="success">{info}</Message>}
-
-        {error && <Message variant="error">{error}</Message>}
+        {success && <Message variant="success">{success.message}</Message>}
+        {info && <Message variant="primary">{info}</Message>}
+        {updateError && <Message variant="danger">{updateError}</Message>}
+        {error && <Message variant="error">{error.message}</Message>}
         <Form onSubmit={formSubmitHandler}>
           <Form.Group className="mb-3" controlId="email">
             <Form.Label>Email address</Form.Label>
@@ -144,7 +164,7 @@ const ProfileScreen = () => {
                       )}
                     </td>
                     <td>
-                      <LinkContainer to={`/order/${order.id}`}>
+                      <LinkContainer to={`/order/${order._id}`}>
                         <Button className="btn btn-sm" variant="light">
                           Details
                         </Button>

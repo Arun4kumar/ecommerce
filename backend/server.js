@@ -2,6 +2,7 @@ import express from "express";
 import products from "./routes/products.js";
 import dotenv from "dotenv";
 import connectDB from "./db/connectDB.js";
+import path from "path";
 import "colours";
 import errorHandler from "./errors/errorHandler.js";
 import userRoutes from "./routes/userRoutes.js";
@@ -14,16 +15,26 @@ app.use(express.json());
 
 connectDB();
 
-app.get("/", (req, res) => {
-  res.send("Api is running");
-});
 app.use("/api/products", products);
 app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
 app.get("/api/config/paypal", (req, res) => res.send(process.env.PAYPAL));
 
+const __dirname = path.resolve();
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "/frontend/build")));
+
+  app.get("*", (req, res) =>
+    res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"))
+  );
+} else {
+  app.get("/", (req, res) => {
+    res.send("api is running");
+  });
+}
+
 app.use("*", (req, res, next) => {
-  console.log(req.path, req.method);
   throw new CustomError(404, "Not found");
 });
 

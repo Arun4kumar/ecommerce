@@ -1,25 +1,22 @@
 import express from "express";
-import Product from "../db/model/Product.js";
-import asyncErrorsHandler from "../errors/asyncErrorsHandler.js";
-import CustomError from "../errors/CustomError.js";
+import { protect, admin } from "../middleware/protect.js";
+import {
+  getProducts,
+  deleteProduct,
+  getProduct,
+  updateProduct,
+  createProduct,
+  addReview,
+  getTopProducts,
+} from "../controllers/productController.js";
 const router = express.Router();
-
-router.get(
-  "/",
-  asyncErrorsHandler(async (req, res) => {
-    const products = await Product.find({});
-    res.json(products);
-  })
-);
-router.get(
-  "/:id",
-  asyncErrorsHandler(async (req, res) => {
-    const product = await Product.findById(req.params.id);
-    if (!product) {
-      throw new CustomError(404, "Product not found");
-    }
-    res.json(product);
-  })
-);
+router.route("/").get(getProducts).post(protect, admin, createProduct);
+router.route("/:id/review").post(protect, addReview);
+router.get("/top", getTopProducts);
+router
+  .route("/:id")
+  .get(getProduct)
+  .delete(protect, admin, deleteProduct)
+  .put(protect, admin, updateProduct);
 
 export default router;

@@ -36,10 +36,10 @@ const PlaceOrderScreen = ({ history }) => {
   );
   cart.shippingPrice = addDecimal(Number(cart.itemsPrice > 100 ? 0 : 40));
   cart.taxPrice = addDecimal(Number(0.15 * addDecimal(cart.itemsPrice)));
-  cart.totalPrice =
-    Number(cart.shippingPrice) +
-    Number(cart.taxPrice) +
-    Number(cart.itemsPrice);
+  cart.totalPrice = addDecimal(
+    Number(cart.shippingPrice) + Number(cart.taxPrice) + Number(cart.itemsPrice)
+  );
+
   const placeOrderHandler = (e) => {
     dispatch(
       createOrder({

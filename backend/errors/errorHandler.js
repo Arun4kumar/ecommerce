@@ -1,5 +1,5 @@
-import color from "colours";
-const errorHandler = (err, req, res, next) => {
+import "colours";
+const errorHandler = (err, res) => {
   const { status = 500, message = "Something went wrong..." } = err;
   console.log("in side error".yellow.inverse, err);
   res.status(status).json({

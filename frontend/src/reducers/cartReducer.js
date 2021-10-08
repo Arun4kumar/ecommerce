@@ -16,25 +16,24 @@ export const cartReducer = (
       const isExists = state.cartItems.find(
         (item) => item.name === recieved.name
       );
-      const { qty, price } = recieved;
-
-      let temp = false;
 
       if (isExists) {
-        temp = true;
-        state.cartItems.map((item) =>
-          isExists.name === item.name ? (item.qty = qty) : item
-        );
-      } else {
-        state.cartItems = [...state.cartItems, recieved];
+        return {
+          ...state,
+          loading: false,
+          cartItems: state.cartItems.map((x) =>
+            x.name == recieved.name ? recieved : x
+          ),
+        };
       }
 
       return {
         ...state,
         loading: false,
-        count: state.count + qty,
-        totalPrice: state.totalPrice + qty * price,
+
+        cartItems: [...state.cartItems, recieved],
       };
+
     case "CART_ADD_FAIL":
       return {
         ...state,
@@ -45,19 +44,13 @@ export const cartReducer = (
       return { ...state, loading: true };
 
     case "CART_REMOVE_SUCCESS":
-      const itemToRemove = state.cartItems.find(
-        (item) => (item._id = action.payload)
-      );
-
       const modified = state.cartItems.filter(
         (item) => item._id !== action.payload
       );
-      console.log(modified);
+
       return {
         ...state,
         cartItems: modified,
-        totalPrice: state.totalPrice - itemToRemove.price * itemToRemove.qty,
-        count: state.count - itemToRemove.qty,
         loading: false,
       };
     case "CART_REMOVE_FAIL":

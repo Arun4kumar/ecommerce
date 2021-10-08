@@ -4,12 +4,20 @@ import {
   updateUserReducer,
   userListReducer,
   userDeleteReducer,
+  userUpdateReducer,
+  userGetReducer,
+  profileGetReducer,
 } from "./reducers/userReducer.js";
 import thunk from "redux-thunk";
 import { createStore, applyMiddleware, combineReducers } from "redux";
 import {
   productListReducer,
   productDetailsReducer,
+  productDeleteReducer,
+  productCreateReducer,
+  productUpdateReducer,
+  productReviewReducer,
+  productTopRatedReducer,
 } from "./reducers/productReducer.js";
 import { cartReducer } from "./reducers/cartReducer";
 import {
@@ -17,6 +25,8 @@ import {
   orderDetailsReducer,
   orderPayReducer,
   orderListMyReducer,
+  ordersListReducer,
+  orderDeliveredReducer,
 } from "./reducers/orderReducer.js";
 
 const reducers = combineReducers({
@@ -24,13 +34,23 @@ const reducers = combineReducers({
   productDetails: productDetailsReducer,
   cart: cartReducer,
   user: userReducer,
-  profile: updateUserReducer,
+  profile: profileGetReducer,
+  profileUpdate: updateUserReducer,
   orderCreate: orderCreateReducer,
   orderDetails: orderDetailsReducer,
   orderPay: orderPayReducer,
   orderMyList: orderListMyReducer,
   usersList: userListReducer,
   userDelete: userDeleteReducer,
+  userUpdate: userUpdateReducer,
+  userGet: userGetReducer,
+  productDelete: productDeleteReducer,
+  newProduct: productCreateReducer,
+  productUpdate: productUpdateReducer,
+  ordersList: ordersListReducer,
+  orderDelivered: orderDeliveredReducer,
+  reviewProduct: productReviewReducer,
+  topRated: productTopRatedReducer,
 });
 
 let cartItems = [];
@@ -43,12 +63,12 @@ if (localStorage.getItem("shippingAddress")) {
 }
 
 const countFetch =
-  cartItems.length == 0
+  cartItems.length === 0
     ? 0
     : cartItems.reduce((value, item) => value + item.qty, 0);
 
 const priceFetch =
-  cartItems.length == 0
+  cartItems.length === 0
     ? 0
     : cartItems.reduce((value, item) => value + item.qty * item.price, 0);
 let userInfo = {};

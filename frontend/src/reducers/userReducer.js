@@ -2,9 +2,21 @@ import {
   USER_DELETE_FAIL,
   USER_DELETE_REQUEST,
   USER_DELETE_SUCCESS,
+  USER_GET_FAIL,
+  USER_GET_REQUEST,
+  USER_GET_SUCCESS,
   USER_LIST_FAIL,
   USER_LIST_REQUEST,
   USER_LIST_SUCCESS,
+  USER_PROFILE_FAIL,
+  USER_PROFILE_REQUEST,
+  USER_PROFILE_SUCCESS,
+  USER_PROFILE_UPDATE_FAIL,
+  USER_PROFILE_UPDATE_REQUEST,
+  USER_PROFILE_UPDATE_SUCCESS,
+  USER_UPDATE_FAIL,
+  USER_UPDATE_REQUEST,
+  USER_UPDATE_SUCCESS,
 } from "../constants/userConstants";
 const userReducer = (
   state = { userInfo: {}, error: null, loading: false },
@@ -29,24 +41,36 @@ const userReducer = (
   }
 };
 
-const updateUserReducer = (
-  state = { profileInfo: {}, error: null, loading: false },
-  action
-) => {
+const profileGetReducer = (state = { profileInfo: {} }, action) => {
   switch (action.type) {
-    case "PROFILE_UPDATE_REQUEST":
-      return { ...state, loading: true };
-    case "PROFILE_UPDATE_SUCCESS":
+    case USER_PROFILE_REQUEST:
+      return { loading: true };
+    case USER_PROFILE_SUCCESS:
       return {
-        ...state,
         loading: false,
         profileInfo: action.payload,
-        error: null,
       };
-    case "PROFILE_UPDATE_FAIL":
-      return { ...state, loading: false, error: action.error };
+    case USER_PROFILE_FAIL:
+      return { loading: false, error: action.error };
     case "PROFILE_RESET":
-      return { profileInfo: {}, loading: false, error: null };
+      return { profileInfo: {} };
+
+    default:
+      return state;
+  }
+};
+
+const updateUserReducer = (state = { profileInfo: {} }, action) => {
+  switch (action.type) {
+    case USER_PROFILE_UPDATE_REQUEST:
+      return { loading: true };
+    case USER_PROFILE_UPDATE_SUCCESS:
+      return {
+        loading: false,
+        success: action.payload,
+      };
+    case USER_PROFILE_UPDATE_FAIL:
+      return { loading: false, error: action.error };
 
     default:
       return state;
@@ -88,4 +112,43 @@ const userDeleteReducer = (state = {}, action) => {
   }
 };
 
-export { userReducer, updateUserReducer, userListReducer, userDeleteReducer };
+const userGetReducer = (state = { user: {} }, action) => {
+  switch (action.type) {
+    case USER_GET_REQUEST:
+      return { loading: true };
+    case USER_GET_SUCCESS:
+      return {
+        loading: false,
+        user: action.payload,
+      };
+    case USER_GET_FAIL:
+      return { loading: false, error: action.error };
+    default:
+      return state;
+  }
+};
+
+const userUpdateReducer = (state = { loading: false, error: null }, action) => {
+  switch (action.type) {
+    case USER_UPDATE_REQUEST:
+      return { loading: true };
+    case USER_UPDATE_SUCCESS:
+      return {
+        loading: false,
+        success: action.payload,
+      };
+    case USER_UPDATE_FAIL:
+      return { loading: false, error: action.error };
+    default:
+      return state;
+  }
+};
+export {
+  userReducer,
+  updateUserReducer,
+  userListReducer,
+  userDeleteReducer,
+  userUpdateReducer,
+  userGetReducer,
+  profileGetReducer,
+};

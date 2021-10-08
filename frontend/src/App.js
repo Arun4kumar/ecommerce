@@ -13,6 +13,10 @@ import PaymentScreen from "./screens/PaymentScreen";
 import PlaceOrderScreen from "./screens/PlaceOrderScreen";
 import OrderScreen from "./screens/OrderScreen";
 import UserListScreen from "./screens/UserListScreen";
+import UpdateUserScreen from "./screens/UpdateUserScreen";
+import ProductListScreen from "./screens/ProductListScreen";
+import ProductUpdateScreen from "./screens/ProductEditScreen";
+import OrderListScreen from "./screens/OrderListScreen";
 
 function App() {
   return (
@@ -26,11 +30,34 @@ function App() {
           <Route path="/shipping" component={ShippingScreen} />
           <Route path="/profile" component={ProfileScreen} />
           <Route path="/register" component={RegisterScreen} />
-          <Route path="/Login" exact component={LoginForm} />
+          <Route path="/login" exact component={LoginForm} />
           <Route path="/products/:id" component={ProductScreen} exact />
           <Route path="/cart" exact component={CartScreen} />
           <Route path="/" exact component={HomeScreen} />
+          <Route path="/search/:keyword" component={HomeScreen} exact />
+          <Route path="/admin/:id/edit" component={UpdateUserScreen} />
+          <Route
+            path="/admin/productlist"
+            component={ProductListScreen}
+            exact
+          />
+          <Route
+            path="/admin/productlist/:pageNumber"
+            component={ProductListScreen}
+            exact
+          />
           <Route path="/admin/userlist" component={UserListScreen} />
+          <Route path="/admin/orderlist" component={OrderListScreen} />
+          <Route path="/page/:pageNumber" exact component={HomeScreen} />
+          <Route
+            path="/search/:keyword/page/:pageNumber"
+            exact
+            component={HomeScreen}
+          />
+          <Route
+            path="/admin/products/:id/edit"
+            component={ProductUpdateScreen}
+          />
         </main>
       </Container>
 

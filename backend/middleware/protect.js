@@ -16,9 +16,7 @@ const protect = asyncErrorsHandler(async (req, res, next) => {
     try {
       const decoded = jwt.verify(token, process.env.SECRET);
       const user = await User.findById(decoded.id).select("-password");
-
       req.user = user;
-      console.log("protect worked".green);
       next();
     } catch (error) {
       throw error;

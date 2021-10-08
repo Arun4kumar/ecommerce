@@ -5,12 +5,13 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node backend/server.js",
     "server": "nodemon backend/server.js",
     "client": " npm start --prefix frontend",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "data:import": "node backend/db/seeder ",
-    "data:destroy": "node backend/db/seeder -d"
+    "data:destroy": "node backend/db/seeder -d",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
   },
   "keywords": [],
   "author": "Arun",
@@ -23,6 +24,8 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.13.7"
+    "mongoose": "^5.13.7",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.3"
   }
 }

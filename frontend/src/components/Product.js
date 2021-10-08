@@ -4,12 +4,16 @@ import Rating from "./Rating";
 import { Link } from "react-router-dom";
 
 const Product = (props) => {
-  const { _id, name, image, rating, numReviews, price } = props.product;
+  const { _id, name, image, ratings, numReviews, price } = props.product;
   return (
     <>
       <Card className="my-3 p-3 rounded">
         <Link to={`/products/${_id}`}>
-          <Card.Img src={image} variant="top" />
+          <Card.Img
+            style={{ height: "200px", width: "100%", objectFit: "cover" }}
+            src={image}
+            variant="top"
+          />
         </Link>
 
         <Card.Body>
@@ -19,7 +23,7 @@ const Product = (props) => {
           <Card.Text as="div">
             <div className="my-3">
               <span>
-                <Rating rating={rating} />
+                <Rating rating={ratings} />
               </span>{" "}
               from {numReviews} reviews
             </div>

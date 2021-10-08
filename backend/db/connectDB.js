@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 const connetDB = async () => {
   try {
-    await mongoose.connect("mongodb://localhost/proshop", {
+    await mongoose.connect(process.env.mongoURI, {
       useUnifiedTopology: true,
       useNewUrlParser: true,
     });

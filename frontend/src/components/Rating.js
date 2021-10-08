@@ -2,6 +2,7 @@ import React from "react";
 
 const Rating = (props) => {
   const { rating, color, text } = props;
+
   return (
     <div className="rating">
       <span>

@@ -4,21 +4,26 @@ import Loader from "../components/Loader";
 import Message from "../components/Message";
 import CartItem from "../components/CartItem.js";
 import { Row, Col } from "react-bootstrap";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Redirect } from "react-router-dom";
 
 const CartScreen = ({ history }) => {
-  const { loading, cartItems, count, error, totalPrice } = useSelector(
-    (state) => state.cart
-  );
+  const { loading, cartItems, error } = useSelector((state) => state.cart);
   const { userInfo } = useSelector((state) => state.user);
-  console.log(cartItems);
+  const [count, setCount] = useState(0);
+  const [totalPrice, setTotalPrice] = useState(0);
   const submitHadler = (e) => {
     if (!userInfo.name) {
       <Redirect to="/login" />;
     }
     history.push("/shipping");
   };
+  useEffect(() => {
+    const tempCount = cartItems.reduce((sum, a) => sum + a.qty, 0);
+    const tempPrice = cartItems.reduce((sum, a) => sum + a.qty * a.price, 0);
+    setCount(tempCount);
+    setTotalPrice(tempPrice);
+  }, [cartItems]);
 
   return (
     <>
